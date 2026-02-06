@@ -41,8 +41,9 @@ public class SecurityConfig {
 
                     config.setAllowedOrigins(List.of(
                             "http://localhost:5173",
-                            "YOUR_FRONTEND_DEPLOYED_URL"
+                            "https://authentication-frontend-9opx.vercel.app"
                     ));
+
 
                     config.setAllowedMethods(List.of(
                             "GET","POST","PUT","DELETE","PATCH","OPTIONS"
