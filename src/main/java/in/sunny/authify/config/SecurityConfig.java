@@ -63,19 +63,20 @@ public class SecurityConfig {
                                 "/**"
                         ).permitAll()
 
-                        // ✅ PUBLIC APIs (NO /api because of context-path)
+                        // ✅ PUBLIC APIs (WITH /api PREFIX)
                         .requestMatchers(
-                                "/login",
-                                "/register",
-                                "/send-reset-otp",
-                                "/reset-password",
-                                "/verify-otp",
-                                "/logout"
+                                "/api/login",
+                                "/api/register",
+                                "/api/send-reset-otp",
+                                "/api/reset-password",
+                                "/api/verify-otp",
+                                "/api/logout"
                         ).permitAll()
 
                         // 🔒 everything else protected
                         .anyRequest().authenticated()
                 )
+
 
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)

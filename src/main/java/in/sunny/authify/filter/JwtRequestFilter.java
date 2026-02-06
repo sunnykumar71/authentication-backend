@@ -25,15 +25,16 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     private final AppUserDetailsService appUserDetailsService;
     private final JwtUtil jwtUtil;
 
-    // NO /api here (because of context-path)
+    // ✅ WITH /api because frontend calls /api/...
     private static final List<String> PUBLIC_URLS = List.of(
-            "/login",
-            "/register",
-            "/send-reset-otp",
-            "/reset-password",
-            "/logout",
-            "/verify-otp"
+            "/api/login",
+            "/api/register",
+            "/api/send-reset-otp",
+            "/api/reset-password",
+            "/api/logout",
+            "/api/verify-otp"
     );
+
 
     @Override
     protected void doFilterInternal(
