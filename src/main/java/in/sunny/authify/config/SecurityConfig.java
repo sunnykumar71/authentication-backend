@@ -5,6 +5,7 @@ import in.sunny.authify.service.AppUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -35,21 +36,22 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
 
-                // ✅ CORS handled here (DO NOT create separate CorsFilter bean)
+                // ✅ GLOBAL CORS CONFIGURATION
                 .cors(cors -> cors.configurationSource(request -> {
                     CorsConfiguration config = new CorsConfiguration();
 
-                    config.setAllowedOrigins(List.of(
+                    // IMPORTANT: use allowedOriginPatterns when credentials = true
+                    config.setAllowedOriginPatterns(List.of(
                             "http://localhost:5173",
                             "https://authentication-frontend-9opx.vercel.app"
                     ));
 
-
                     config.setAllowedMethods(List.of(
-                            "GET","POST","PUT","DELETE","PATCH","OPTIONS"
+                            "GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"
                     ));
 
                     config.setAllowedHeaders(List.of("*"));
+                    config.setExposedHeaders(List.of("Authorization"));
                     config.setAllowCredentials(true);
 
                     return config;
@@ -57,26 +59,23 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(auth -> auth
 
-                        // ✅ always allow preflight
-                        .requestMatchers(
-                                org.springframework.http.HttpMethod.OPTIONS,
-                                "/**"
-                        ).permitAll()
+                        // ✅ ALWAYS allow preflight
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
-                        // ✅ PUBLIC APIs (WITH /api PREFIX)
+                        // ✅ PUBLIC APIs
                         .requestMatchers(
                                 "/api/login",
                                 "/api/register",
                                 "/api/send-reset-otp",
                                 "/api/reset-password",
                                 "/api/verify-otp",
-                                "/api/logout"
+                                "/api/logout",
+                                "/api/is-authenticated"
                         ).permitAll()
 
-                        // 🔒 everything else protected
+                        // 🔒 everything else secured
                         .anyRequest().authenticated()
                 )
-
 
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
